@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+    {{ super() }}
+    <!-- CSS -->
+    <style>
+        .table-td-custom {
+            font-size: 0.7rem;
+        }
+        .result-image {
+            border: 1px solid;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!-- Left column -->
+            <div class="col">
+                <div class="d-flex justify-content-center align-items-center flex-column">
+                    <h5>改进前</h5>
+                    <img src="{{ url_for('static', filename='assets/img/training_result_before.png') }}" alt="Left Image" class="img-fluid result-image">
+                </div>
+            </div>
+            <!-- Right column -->
+            <div class="col">
+                <div class="d-flex justify-content-center align-items-center flex-column">
+                    <h5>改进后</h5>
+                    <img src="{{ url_for('static', filename='assets/img/training_result_after.png') }}" alt="Right Image" class="img-fluid result-image">
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered">
+                    <tr>
+                        {% for header in headers %}
+                        <th class="table-td-custom">{{ header }}</th>
+                        {% endfor %}
+                    </tr>
+                    <tbody>
+                        {% for row in csv_data %}
+                        <tr>
+                            {% for value in row %}
+                            <td class="table-td-custom">{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

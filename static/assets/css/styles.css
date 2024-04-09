@@ -1,0 +1,9 @@
+/*=============== VARIABLES CSS ===============*/
+:root {
+  --body-font: "Microsoft YaHei", sans-serif;
+}
+
+html, body {
+  font-family: "Microsoft YaHei", sans-serif!important;
+  height: 100%;
+}

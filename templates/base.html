@@ -1,0 +1,72 @@
+{% from 'bootstrap5/nav.html' import render_nav_item %}
+{% from 'bootstrap5/utils.html' import render_messages %}
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>YOLO7</title>
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.css') }}">
+        {{ bootstrap.load_css() }}
+        {% block styles %}
+        <!-- CSS -->
+            <style>
+                .container-flex {
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 100vh;
+                }
+                main {
+                    flex-grow: 1;
+                }
+                footer {
+                    margin: 20px;
+                }
+            </style>
+        {% endblock %}
+        <script src="{{ url_for('static', filename='assets/js/jquery-3.7.1.min.js') }}"></script>
+    </head>
+    <body>
+        <div class="container-flex">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+                <div class="container">
+                    <div class="col-auto">
+                        <a class="navbar-brand" href="/">
+                            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="30">
+                            <span>YOLO7</span>
+                        </a>
+                    </div>
+                    <div class="col"></div>
+                    <div class="col-auto">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav mr-auto">
+                                {{ render_nav_item('training_result', '训练结果') }}
+                                {{ render_nav_item('instance_demo', '实例演示') }}
+                                {{ render_nav_item('instance_compare', '实例对比') }}
+                                {{ render_nav_item('about_system', '关于系统') }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <main class="container">
+                {{ render_messages(container=False, dismissible=True, dismiss_animate=True) }}
+                {% block content %}{% endblock %}
+            </main>
+
+            <footer class="text-center">
+                {% block footer %}
+                    <small> &copy; 2023–<script>document.write(new Date().getFullYear())</script> <a href="https://github.com/xxx">Author Signature</a>
+                    </small>
+                {% endblock %}
+            </footer>
+        </div>
+        {{ bootstrap.load_js() }}
+    </body>
+</html>

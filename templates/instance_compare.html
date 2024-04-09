@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            {% set default_image = url_for('static', filename='assets/img/placeholder_img.png') %}
+            <!-- Left column -->
+            <div class="col">
+                <div class="d-flex justify-content-center align-items-center flex-column">
+                    <h5>改进前</h5>
+                    <img src="{{ before_image if before_image else default_image }}" alt="Left Image" class="img-fluid">
+                </div>
+            </div>
+            <!-- Right column -->
+            <div class="col">
+                <div class="d-flex justify-content-center align-items-center flex-column">
+                    <h5>改进后</h5>
+                    <img src="{{ after_image if after_image else default_image }}" alt="Right Image" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,1 +1,1 @@
-# satellite_yolo
+# satellite_detect

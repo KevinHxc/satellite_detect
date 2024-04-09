@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+    {{ super() }}
+    <!-- CSS -->
+    <style>
+        .ecognize-image-container {
+            position: relative;
+            display: inline-block;
+        }
+    
+        .ecognize-image-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+    
+        .ecognize-image-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+    
+        .image-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col">
+                <label class="btn btn-primary">
+                    <input id="selectFile" type="file" name="file" class="form-control-file d-none" id="fileInput" accept="image/png, video/mp4">
+                    选择文件
+                </label>
+                <label id="fileName"></label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <div class="progress">
+                    <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <img id="originImage" src="{{ url_for('static', filename='assets/img/placeholder_img.png') }}" alt="training_origin" class="img-fluid">
+            </div>
+            <div class="col-auto d-flex align-items-center justify-content-center">
+                <form method="GET">
+                    <button id="recognizeButton" class="btn btn-primary" type="button" disabled>检测识别</button>
+                </form>
+            </div>
+            <div class="col text-center" style="align-content: center;">
+                <div id="ecognizeImageContainer" class="ecognize-image-container">
+                    <img id="recognizeImage" src="{{ url_for('static', filename='assets/img/placeholder_img.png') }}" alt="training_recognize" class="img-fluid">
+                    <div id="recognizeSpinner" class="spinner-border" role="status" hidden>
+                        <span class="visually-hidden"></span>
+                    </div>
+                    <div id="recognizeText" class="image-text">等待检测识别</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            // 当文件选择发生变化时
+            $('#selectFile').change(function() {
+                $('#ecognizeImageContainer').addClass('ecognize-image-container');
+                $('#recognizeText').attr('hidden', false);
+
+                // 获取所选文件
+                var file = $(this)[0].files[0];
+
+                $('#recognizeButton').prop('disabled', !file);
+                if(!file) {
+                    restoreDisplayStatus();
+                    return;
+                }
+
+                // 显示文件名
+                $('#fileName').text(file.name);
+
+                // 使用 FileReader 读取文件内容并显示图片
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#originImage').attr('src', e.target.result);
+                    $('#recognizeImage').attr('src', e.target.result);
+                    restoreDisplayStatus(true);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // 当点击上传按钮时
+            $('#recognizeButton').click(function() {
+                startProgressAnimation();
+                // 创建 FormData 对象，用于发送文件数据
+                var formData = new FormData();
+                // 将文件添加到 FormData 对象中
+                formData.append('file', $('#selectFile')[0].files[0]);
+
+                // 发送 AJAX 请求
+                $.ajax({
+                    type: 'POST',
+                    url: '/recognize',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        var image_path = response.recognized_image_path;
+                        // 将图片路径显示在画面上
+                        $('#recognizeImage').attr('src', image_path);
+                    },
+                    error: function(error) {
+                        console.error('识别失败:', error);
+                    }
+                });
+            });
+        });
+
+        function startProgressAnimation() {
+            var width = 0;
+            var interval = setInterval(function() {
+                width += 1;
+
+                $('#recognizeSpinner').attr('hidden', false);
+                $('#recognizeImage').attr('hidden', true);
+                $('#recognizeText').attr('hidden', true);
+                $('#recognizeButton').prop('disabled', true);
+                $('#selectFile').prop('disabled', true);
+                $('#ecognizeImageContainer').removeClass('ecognize-image-container');
+
+                $('#progressBar').css('width', width + '%');
+                $('#progressBar').text(width + '%');
+                if (width >= 100) {
+                    clearInterval(interval);
+
+                    $('#recognizeSpinner').attr('hidden', true);
+                    $('#recognizeImage').attr('hidden', false);
+                    $('#recognizeButton').prop('disabled', false);
+                    $('#selectFile').prop('disabled', false);
+                }
+            }, 225);
+        }
+
+        function restoreDisplayStatus(keepSelected) {
+            if(!keepSelected){
+                $('#originImage').attr('src', '/static/assets/img/placeholder_img.png');
+                $('#recognizeImage').attr('src', '/static/assets/img/placeholder_img.png');
+            }
+
+            $('#progressBar').css('width', '0%');
+            $('#progressBar').text('0%');
+        }
+    </script>
+{% endblock %}
