@@ -78,9 +78,9 @@ def recognize_file():
             recognize_file.filename = filename
             print("printing predict_img :::::: ", recognize_file)
             
-            process = Popen(["python", "detect.py", '--source', file_path, "--weights","after.pt"], shell=True)
+            process = Popen(["python", "detect.py", '--source', file_path, "--weights","after.pt", "--save-txt", "--save-conf"], shell=True)
             # detect_before
-            process_before = Popen(["python", "detect_before.py", '--source', file_path, "--weights","before.pt"], shell=True)
+            process_before = Popen(["python", "detect_before.py", '--source', file_path, "--weights","before.pt", "--save-txt", "--save-conf"], shell=True)
 
             if file_extension == 'mp4':
                 process.communicate()
@@ -98,13 +98,30 @@ def recognize_file():
     else:
         return jsonify({'error': 'The file was not found.'})
 
+def read_txt_file(file_path):
+    data = []
+    if not file_path:
+        return data
+    with open(file_path, newline='', encoding='utf-8') as txtfile:
+        lines = txtfile.readlines()
+        for line in lines:
+            data.append(line.strip().split())
+    return data
+
 @app.route("/compare")
 def instance_compare():
     before_folder_path = 'runs/detect_before'
     before_image = get_latest_file(before_folder_path)
+    
+    last_before_folder = get_latest_folder(before_folder_path)
+    before_result = read_txt_file(get_latest_file(last_before_folder))
+    
     after_folder_path = 'runs/detect'
     after_image = get_latest_file(after_folder_path)
-    return render_template('instance_compare.html', before_image=before_image, after_image=after_image)
+
+    last_after_folder = get_latest_folder(after_folder_path)
+    after_result = read_txt_file(get_latest_file(last_after_folder))
+    return render_template('instance_compare.html', before_image=before_image, before_result=before_result, after_image=after_image, after_result=after_result)
 
 @app.route("/about")
 def about_system():
