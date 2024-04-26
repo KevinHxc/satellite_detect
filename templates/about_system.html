@@ -24,12 +24,16 @@
                     <br>
                     <p>
                         <span class="icon"><img src="{{ url_for('static', filename='assets/img/about_baseline_icon.png') }}" alt="baseline" height="28"></span>
-                        <span class="bold">基线模型</span> 
+                        <span class="bold">模型优化</span> 
                         <div class="col-md-6">
-                            <p>鉴于YOLOv7具有精度高、轻量化的特点，本系统选取YOLOv7为基线模型。</p>
+                            <p>鉴于YOLOv7具有精度高、轻量化的特点，本系统选取YOLOv7为基线模型，并提出以下3种模块对其进行了优化。</p>
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;动态非单调聚焦机制：可以减少对低质量样本的惩罚，同时屏蔽低质量样本的影响。</p>
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;双级路由注意力网络：更好地理解卫星图像中不同区域之间的关系。</p>
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;可切换空洞卷积模块：有效地捕获目标周围的不同尺度和细节信息。</p>
                             <p>&nbsp;</p>
                         </div>
                     </p>
+
                     <p>
                         <span class="icon"><img src="{{ url_for('static', filename='assets/img/about_dataset_icon.png') }}" alt="dataset" height="28"></span>
                         <span class="bold">数据集</span> 
